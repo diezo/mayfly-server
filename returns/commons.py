@@ -23,10 +23,15 @@ class CommonExceptions:
         content_type="text/json"
     ))
 
+    Unauthenticated: Callable[[], Response] = staticmethod(lambda: Response(
+        status=401,
+        content_type="text/json"
+    ))
+
 
 class CommonSuccessions:
 
-    Success: Callable[[str], Response] = staticmethod(lambda message: Response(
+    SuccessMessage: Callable[[str], Response] = staticmethod(lambda message: Response(
         response=json.dumps({"status": "ok", "message": message}),
         status=200,
         content_type="text/json"
@@ -40,6 +45,12 @@ class CommonSuccessions:
 
     AccountCreated: Callable[[], Response] = staticmethod(lambda: Response(
         response=json.dumps({"status": "ok", "account_created": True}),
+        status=200,
+        content_type="text/json"
+    ))
+
+    DataUpdated: Callable[[str, str], Response] = staticmethod(lambda key, value: Response(
+        response=json.dumps({"status": "ok", key: value}),
         status=200,
         content_type="text/json"
     ))

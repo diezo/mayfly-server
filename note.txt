@@ -1,5 +1,11 @@
-1. Implement Bearer Authentication
+No new tasks.
 
-2. Implement Profile Customization:
+
+
+
+
+[DONE] 1. Implement Bearer Authentication
+
+[DONE] 2. Implement Profile Customization:
 - Change Full Name
 - Change Biography

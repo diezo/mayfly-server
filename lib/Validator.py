@@ -11,3 +11,7 @@ class Validator:
     @staticmethod
     # TODO: Implement
     def full_name(full_name: str) -> tuple[bool, str | None]: return True, None
+
+    @staticmethod
+    # TODO: Implement
+    def biography(biography: str) -> tuple[bool, str | None]: return True, None

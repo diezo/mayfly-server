@@ -18,6 +18,7 @@ blueprint: Blueprint = Blueprint(endpoint, __name__)
 hold_accounts_collection: Collection = Database()["hold-accounts"]
 auth_collection: Collection = Database()["auth"]
 
+# Libraries Initialization
 session_manager: SessionManager = SessionManager(auth_collection)
 otp_email_verification: OTPEmailVerification = OTPEmailVerification()
 
