@@ -6,19 +6,23 @@ from lib.Validator import Validator
 from lib.SessionManager import SessionManager
 from returns.commons import CommonExceptions, CommonSuccessions
 from hashlib import sha512
-from lib.mails.EmailVerification import EmailVerification
+from lib.mails.OTPEmailVerification import OTPEmailVerification
 
-blueprint: Blueprint = Blueprint("register", __name__)
+# Configurations
+endpoint: str = "register"
+
+# Create Blueprint
+blueprint: Blueprint = Blueprint(endpoint, __name__)
 
 # Database Collections
 hold_accounts_collection: Collection = Database()["hold-accounts"]
 auth_collection: Collection = Database()["auth"]
 
 session_manager: SessionManager = SessionManager(auth_collection)
-email_verification: EmailVerification = EmailVerification()
+otp_email_verification: OTPEmailVerification = OTPEmailVerification()
 
 
-@blueprint.post("/register")
+@blueprint.post(f"/{endpoint}")
 def register() -> Response:
     """
     Endpoint to register a new account.
@@ -29,18 +33,22 @@ def register() -> Response:
         # Gather Form Data
         email: str = request.json["email"]
         password: str = request.json["password"]
-        full_name: str = request.json["full_name"]
 
         # Form Data Validation
         email_validated: tuple[bool, str] = Validator.email(email)
         password_validated: tuple[bool, str] = Validator.password(password)
-        full_name_validated: tuple[bool, str] = Validator.full_name(full_name)
 
         if not email_validated[0]: return CommonExceptions.BadRequest(email_validated[1])
         if not password_validated[0]: return CommonExceptions.BadRequest(password_validated[1])
-        if not full_name_validated[0]: return CommonExceptions.BadRequest(full_name_validated[1])
 
+        # Check If Email Already Registered
+        if auth_collection.find_one({"email": email}) is not None: return CommonExceptions.Forbidden(
+            "Email already registered."
+        )
+
+        # Generate Tokens
         registration_token: str = session_manager.new_registration_token()
+        otp: str = session_manager.new_otp()
 
         # Delete Previous Accounts (On Hold)
         hold_accounts_collection.delete_many({"email": email})
@@ -49,17 +57,15 @@ def register() -> Response:
         hold_accounts_collection.insert_one({
             "email": email,
             "password_sha512_hash": sha512(password.encode("utf-8")).hexdigest(),
-            "registration_token": registration_token
+            "registration_token": registration_token,
+            "otp": otp
         })
 
         # Send Verification Email
-        email_verification.send(full_name, email, registration_token)
+        otp_email_verification.send(email, otp)
 
         # Return Success Message
-        return CommonSuccessions.Success(
-            "We've sent you an email with a verification link to proceed further. "
-            "Please check your inbox as well as junk folder."
-        )
+        return CommonSuccessions.OTPSent(registration_token)
 
     # Not Enough Form Data
     except KeyError:

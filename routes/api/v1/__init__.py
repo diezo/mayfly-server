@@ -1,1 +1,1 @@
-from .v1 import app
+from .v1 import blueprint

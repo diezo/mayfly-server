@@ -1,8 +1,11 @@
 from flask import Blueprint
-from .routes import ajax, register
+from .accounts import accounts
 
-app: Blueprint = Blueprint("v1", __name__)
+# Configurations
+endpoint: str = "v1"
+
+# Create Blueprint
+blueprint: Blueprint = Blueprint(endpoint, __name__)
 
 # Register Blueprints
-app.register_blueprint(ajax.blueprint)
-app.register_blueprint(register.blueprint)
+blueprint.register_blueprint(accounts.blueprint, url_prefix="/accounts")

@@ -17,6 +17,10 @@ class SessionManager:
     REGISTRATION_TOKEN_ALLOWED_CHARS: str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     REGISTRATION_TOKEN_LENGTH: int = 600
 
+    # About OTPs (For Email Verification)
+    OTP_ALLOWED_CHARS: str = "0123456789"
+    OTP_LENGTH: int = 6
+
     def __init__(self, auth_collection: Collection) -> None:
         """
         Initializes SessionManager Class.
@@ -43,7 +47,8 @@ class SessionManager:
                 ]
             ))[0]["sessions_count"]
 
-        except OperationFailure:
+        # No Sessions Yet
+        except (OperationFailure, IndexError):
             sessions_count: int = 0
 
         # Slice sessions to comply with MAX_SESSIONS_COUNT
@@ -83,3 +88,11 @@ class SessionManager:
         """
 
         return str().join(choices(self.REGISTRATION_TOKEN_ALLOWED_CHARS, k=self.REGISTRATION_TOKEN_LENGTH))
+
+    def new_otp(self) -> str:
+        """
+        Generates a new OTP for accounts to verify their email.
+        :return: otp (String)
+        """
+
+        return str().join(choices(self.OTP_ALLOWED_CHARS, k=self.OTP_LENGTH))

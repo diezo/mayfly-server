@@ -8,13 +8,19 @@ from hashlib import sha512
 from returns.commons import CommonExceptions
 from lib.SessionManager import SessionManager
 
-blueprint: Blueprint = Blueprint("ajax", __name__)
+# Configurations
+endpoint: str = "login"
+
+# Create Blueprint
+blueprint: Blueprint = Blueprint(endpoint, __name__)
+
+# Database Collections
 auth_collection: Collection = Database()["auth"]
 session_manager: SessionManager = SessionManager(auth_collection)
 
 
-@blueprint.post("/ajax")
-def ajax() -> Response:
+@blueprint.post(f"/{endpoint}")
+def login() -> Response:
     """
     Endpoint to log into an existing account.
     :return: Response
@@ -33,7 +39,6 @@ def ajax() -> Response:
 
         # Fetching Auth User From Database
         auth_user: dict = auth_collection.find_one({"email": email})
-        identifier: str = auth_user["_id"]
 
         # No Such Account
         if auth_user is None:
@@ -41,6 +46,9 @@ def ajax() -> Response:
                 json.dumps({"status": "fail", "error": "Email isn't registered."}),
                 401
             )
+
+        # Get Identifier
+        identifier: str = auth_user["_id"]
 
         # Calculate password hashes
         password_sha512_hash: str = auth_user.get("password_sha512_hash")
