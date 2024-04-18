@@ -1,0 +1,5 @@
+1. Implement Bearer Authentication
+
+2. Implement Profile Customization:
+- Change Full Name
+- Change Biography
