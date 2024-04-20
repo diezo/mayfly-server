@@ -29,14 +29,22 @@ class RoomManager:
     def create_room(
             self,
             owner_id: str,
+            room_type: str,
+            access_type: str,
             room_title: str = None,
-            room_description: str = None
+            room_description: str = None,
+            passcode: str = None,
+            invitees: list[str] = None
     ) -> CreatedRoom:
         """
         Registers a new room in database.
         :param owner_id: Owner Identifier
         :param room_title: Room Title
+        :param room_type: Room Authentication Type
+        :param access_type: Room Access Type
         :param room_description: Room's Short Description
+        :param passcode: Passcode To Protect Room-Joining Access
+        :param invitees: List of Identifiers Allowed To Join Room
         :return: CreatedRoom Object with Room's Information
         """
 
@@ -47,12 +55,16 @@ class RoomManager:
         entry: dict = {
             "_id": room_id,
             "owner_id": owner_id,
-            "created-timestamp": self.timestamp_now()
+            "created-timestamp": self.timestamp_now(),
+            "room-type": room_type,
+            "access-type": access_type
         }
 
         # Append Optional Data To Entry
         if room_title is not None: entry["title"] = room_title
         if room_description is not None: entry["description"] = room_description
+        if passcode is not None: entry["passcode"] = passcode
+        if invitees is not None: entry["invitees"] = invitees
 
         # Add Room in Database
         self.rooms_collection.insert_one(entry)
