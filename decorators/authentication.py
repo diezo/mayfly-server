@@ -16,7 +16,7 @@ def authenticated(method: Callable) -> Callable:
     :return: Callable
     """
 
-    def wrapper():
+    def wrapper(*args, **kwargs):
         """
         Analyzes main function and executes it if user is authenticated.
         :return:
@@ -36,7 +36,7 @@ def authenticated(method: Callable) -> Callable:
         )
 
         # Final Decision
-        if account is not None: return method(bearer[0])  # Authorized
+        if account is not None: return method(bearer[0], *args, **kwargs)  # Authorized
         else: return CommonExceptions.Unauthenticated()  # Unauthorized
 
     return wrapper

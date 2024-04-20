@@ -28,11 +28,22 @@ class CommonExceptions:
         content_type="text/json"
     ))
 
+    RoomOwnershipError: Callable[[], Response] = staticmethod(lambda: Response(
+        response=json.dumps("Only admins are permitted to do this action."),
+        status=403,
+        content_type="text/json"
+    ))
+
 
 class CommonSuccessions:
 
     SuccessMessage: Callable[[str], Response] = staticmethod(lambda message: Response(
         response=json.dumps({"status": "ok", "message": message}),
+        status=200,
+        content_type="text/json"
+    ))
+
+    NoContentSuccess: Callable[[], Response] = staticmethod(lambda: Response(
         status=200,
         content_type="text/json"
     ))
@@ -51,6 +62,12 @@ class CommonSuccessions:
 
     DataUpdated: Callable[[str, str], Response] = staticmethod(lambda key, value: Response(
         response=json.dumps({"status": "ok", key: value}),
+        status=200,
+        content_type="text/json"
+    ))
+
+    RoomCreated: Callable[[str], Response] = staticmethod(lambda room_id: Response(
+        response=json.dumps({"status": "ok", "room_id": room_id}),
         status=200,
         content_type="text/json"
     ))

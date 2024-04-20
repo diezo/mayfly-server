@@ -16,7 +16,7 @@ blueprint: Blueprint = Blueprint(endpoint, __name__)
 
 # Database Collections
 auth_collection: Collection = Database()["auth"]
-hold_accounts_collection: Collection = Database()["hold-accounts"]
+hold_accounts_collection: Collection = Database()["held-accounts"]
 
 # Libraries Initialization
 session_manager: SessionManager = SessionManager(auth_collection)

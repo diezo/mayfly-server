@@ -15,7 +15,7 @@ endpoint: str = "register"
 blueprint: Blueprint = Blueprint(endpoint, __name__)
 
 # Database Collections
-hold_accounts_collection: Collection = Database()["hold-accounts"]
+hold_accounts_collection: Collection = Database()["held-accounts"]
 auth_collection: Collection = Database()["auth"]
 
 # Libraries Initialization
